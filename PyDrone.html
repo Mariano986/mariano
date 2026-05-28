@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PyDrone">
+<title>PyDrone</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--v:#1a7a1a;--vc:#2eb82e;--vs:#e8f5e8;--ci:#1a2e1a;--g:#5a6b5a;--l:#c8dcc8;--f:#f4f8f0;--t:#1c2a1c}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:"DM Mono",monospace;background:var(--f);color:var(--t);display:flex;flex-direction:column;height:100dvh}
+header{background:var(--ci);color:white;padding:12px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0;border-bottom:3px solid var(--vc)}
+header h1{font-family:"Syne",sans-serif;font-size:16px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;line-height:1.2}
+header h1 span{display:block;font-size:10px;font-weight:400;color:#8fbc8f;letter-spacing:.1em;font-family:"DM Mono",monospace}
+.tabs{display:flex;background:var(--ci);flex-shrink:0}
+.tab{flex:1;padding:10px 4px;text-align:center;cursor:pointer;font-size:10px;color:#8fbc8f;text-transform:uppercase;border-bottom:3px solid transparent}
+.tab.active{color:var(--vc);border-bottom-color:var(--vc)}
+.sec{display:none;flex:1;overflow:hidden;flex-direction:column}
+.sec.active{display:flex}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 30px}
+.card{background:white;border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid var(--l);box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.ct{font-family:"Syne",sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--v);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--l)}
+.row{display:flex;gap:10px}
+.f{margin-bottom:11px;flex:1}
+label{display:block;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--g);margin-bottom:4px}
+input,textarea{width:100%;padding:10px 12px;border:1.5px solid var(--l);border-radius:8px;font-family:"DM Mono",monospace;font-size:14px;color:var(--t);background:var(--f);-webkit-appearance:none}
+input:focus,textarea:focus{outline:none;border-color:var(--v);background:white}
+textarea{resize:none;height:76px}
+.wg{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;max-width:180px}
+.wb{padding:9px 4px;border:1.5px solid var(--l);border-radius:7px;background:var(--f);font-size:12px;color:var(--g);cursor:pointer;text-align:center}
+.wb.sel{background:var(--v);color:white;border-color:var(--v);font-weight:700}
+.wc{display:flex;align-items:center;justify-content:center;font-size:18px;border:none;background:none}
+.fa{border:2px dashed var(--l);border-radius:10px;overflow:hidden}
+.fbs{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--l)}
+.fb{padding:16px 8px;background:white;border:none;cursor:pointer;text-align:center;font-size:11px;color:var(--g);display:flex;flex-direction:column;align-items:center;gap:5px}
+.fb span{font-size:22px}
+.fp{display:none}.fp.show{display:block}
+.fp img{width:100%;max-height:200px;object-fit:cover;display:block}
+.fc{width:100%;padding:7px;background:#ffeaea;border:none;font-size:11px;color:#c0392b;cursor:pointer}
+.ai{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--f);border-radius:7px;margin-bottom:5px;font-size:12px}
+.ai button{background:none;border:none;color:var(--g);font-size:16px;cursor:pointer}
+.sg{display:none;background:white;border:1.5px solid var(--v);border-top:none;border-radius:0 0 8px 8px;max-height:160px;overflow-y:auto;position:relative;z-index:10}
+.si{padding:11px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--l)}
+.bp{width:100%;padding:14px;background:var(--v);color:white;border:none;border-radius:10px;font-family:"Syne",sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;cursor:pointer;margin-bottom:8px}
+.bs{width:100%;padding:12px;background:white;color:var(--v);border:2px solid var(--v);border-radius:10px;font-family:"Syne",sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;cursor:pointer;margin-bottom:8px}
+.be{width:100%;padding:12px;background:#1d6f42;color:white;border:none;border-radius:10px;font-family:"Syne",sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;cursor:pointer;margin-bottom:8px}
+.bg{width:100%;padding:11px;background:var(--f);color:var(--g);border:1.5px solid var(--l);border-radius:10px;font-size:12px;cursor:pointer;margin-bottom:8px}
+.bsm{padding:8px 14px;background:var(--vs);color:var(--v);border:1.5px solid var(--v);border-radius:7px;font-size:12px;cursor:pointer}
+.gps-row{display:flex;gap:8px}
+.gps-row input{flex:1;font-size:12px}
+.gps-btn{background:var(--v);color:white;border:none;border-radius:8px;padding:0 14px;font-size:20px;cursor:pointer;flex-shrink:0}
+.ih{color:white;padding:18px;border-radius:12px 12px 0 0}
+.il{font-family:"Syne",sans-serif;font-size:20px;font-weight:800;margin-bottom:3px}
+.ib{font-size:10px;color:#8fbc8f;text-transform:uppercase;letter-spacing:.08em}
+.ifd{font-size:11px;color:#8fbc8f;margin-top:3px}
+.ifoto{width:100%;max-height:200px;object-fit:cover;display:block;border-bottom:4px solid var(--vc)}
+.sts{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--l)}
+.st{background:white;padding:12px 14px}
+.st.full{grid-column:1/-1}
+.st.acc{background:var(--vs)}
+.sl{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--g);margin-bottom:3px}
+.sv{font-family:"Syne",sans-serif;font-size:17px;font-weight:700;color:var(--t);line-height:1}
+.sv.gn{color:var(--v)}
+.su{font-size:10px;color:var(--g);font-weight:400;margin-left:2px}
+.is{font-family:"Syne",sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--v);padding:11px 14px 0;background:var(--vs);border-top:1px solid var(--l)}
+.ia{padding:11px 14px;background:white}
+.at{display:inline-block;background:var(--ci);color:#8fbc8f;padding:3px 9px;border-radius:20px;font-size:11px;margin:2px}
+.inn{padding:11px 14px;font-size:12px;color:var(--g);line-height:1.6;font-style:italic;background:var(--vs);border-top:1px solid var(--l)}
+.ie{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;color:var(--g)}
+.ie .ico{font-size:48px;opacity:.3;margin-bottom:12px}
+.hi{background:white;border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid var(--l);display:flex;align-items:center;gap:10px}
+.hic{width:40px;height:40px;background:var(--vs);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;cursor:pointer}
+.hin{flex:1;cursor:pointer}
+.hil{font-family:"Syne",sans-serif;font-size:14px;font-weight:700;margin-bottom:2px}
+.him{font-size:11px;color:var(--g)}
+.hha{text-align:center;flex-shrink:0;cursor:pointer}
+.hhn{font-family:"Syne",sans-serif;font-size:16px;font-weight:700;color:var(--v)}
+.hhl{font-size:9px;color:var(--g);text-transform:uppercase}
+.bb{background:#fff0f0;border:1px solid #ffcccc;border-radius:7px;padding:7px 9px;font-size:14px;cursor:pointer;color:#c0392b;flex-shrink:0}
+.modal{display:none;position:fixed;inset:0;z-index:1000;background:white;overflow-y:auto}
+.modal-bar{position:sticky;top:0;background:var(--ci);display:flex;align-items:center;justify-content:space-between;padding:12px 16px;z-index:10;gap:8px}
+.modal-bar button{padding:8px 14px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+.img-overlay{display:none;position:fixed;inset:0;z-index:2000;background:#000;overflow-y:auto;flex-direction:column}
+.img-overlay.show{display:flex}
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ci);color:white;padding:10px 20px;border-radius:20px;font-size:13px;z-index:9999;transition:transform .3s;border:1px solid var(--v);white-space:nowrap;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="font-size:26px">🚁</div>
+  <h1>PyDrone<span>Aplicaciones Aereas - T50</span></h1>
+</header>
+
+<div class="tabs">
+  <div class="tab active" id="tb0" onclick="goTab(0)">✏️ Cargar</div>
+  <div class="tab" id="tb1" onclick="goTab(1)">📋 Informe</div>
+  <div class="tab" id="tb2" onclick="goTab(2)">📂 Historial</div>
+  <div class="tab" id="tb3" onclick="goTab(3)">🌱 Siembra</div>
+</div>
+
+<!-- CARGAR -->
+<div class="sec active" id="sec0"><div class="scroll">
+  <div class="card">
+    <div class="ct">🌾 Identificacion</div>
+    <div class="f"><label>Productor</label>
+      <input type="text" id="fp" placeholder="Ej: Juan Perez" autocomplete="off">
+      <div class="sg" id="sgp"></div>
+    </div>
+    <div class="f"><label>Lote *</label><input type="text" id="fl" placeholder="Ej: La Esperanza Norte" autocomplete="off"></div>
+    <div class="f"><label>Cultivo</label><input type="text" id="fcu" placeholder="Ej: Soja, Maiz, Trigo" autocomplete="off"></div>
+    <div class="f"><label>Ubicacion del Lote</label>
+      <div class="gps-row">
+        <input type="text" id="fub" placeholder="Pega coordenadas o toca el pin" autocomplete="off">
+        <button class="gps-btn" id="btnGpsA">📍</button>
+      </div>
+    </div>
+    <div class="f"><label>Fecha</label><input type="date" id="ff"></div>
+    <div class="row">
+      <div class="f"><label>Has. Lote</label><input type="number" id="fh" placeholder="0" step="0.1" inputmode="decimal"></div>
+      <div class="f"><label>Has. Aplicadas</label><input type="number" id="fha" placeholder="0" step="0.1" inputmode="decimal"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">⏱️ Tramos de Trabajo</div>
+    <div id="alist-tramos"></div>
+    <div style="background:var(--f);border-radius:10px;padding:12px;border:1.5px dashed var(--l);margin-bottom:8px">
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--g);margin-bottom:8px;font-weight:700">Nuevo tramo</div>
+      <div class="row">
+        <div class="f"><label>Fecha inicio</label><input type="date" id="ta-fi-fecha"></div>
+        <div class="f"><label>Hora inicio</label><input type="time" id="ta-fi-hora"></div>
+      </div>
+      <div class="row">
+        <div class="f"><label>Fecha fin</label><input type="date" id="ta-fn-fecha"></div>
+        <div class="f"><label>Hora fin</label><input type="time" id="ta-fn-hora"></div>
+      </div>
+    </div>
+    <button class="bsm" id="btnAtramo">+ Agregar tramo</button>
+  </div>
+  <div class="card">
+    <div class="ct">🌤️ Clima</div>
+    <div id="alist-clima"></div>
+    <div style="background:var(--f);border-radius:10px;padding:12px;border:1.5px dashed var(--l);margin-bottom:8px">
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--g);margin-bottom:8px;font-weight:700">Registrar lectura</div>
+      <div class="row">
+        <div class="f"><label>Fecha</label><input type="date" id="cl-fecha"></div>
+        <div class="f"><label>Hora</label><input type="time" id="cl-hora"></div>
+      </div>
+      <div class="row">
+        <div class="f"><label>Viento km/h</label><input type="number" id="cl-vi" placeholder="0" step="0.5" inputmode="decimal"></div>
+        <div class="f"><label>Dir.</label>
+          <select id="cl-wd" style="width:100%;padding:10px 8px;border:1.5px solid var(--l);border-radius:8px;font-family:'DM Mono',monospace;font-size:13px;background:var(--f);-webkit-appearance:none">
+            <option value="">-</option><option>N</option><option>NE</option><option>E</option><option>SE</option><option>S</option><option>SO</option><option>O</option><option>NO</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="f"><label>Humedad %</label><input type="number" id="cl-hu" placeholder="0" step="1" inputmode="numeric"></div>
+        <div class="f"><label>Temp C</label><input type="number" id="cl-te" placeholder="0" step="0.5" inputmode="decimal"></div>
+      </div>
+    </div>
+    <button class="bsm" id="btnAclima">+ Registrar</button>
+  </div>
+  <div class="card">
+    <div class="ct">⚙️ Parametros</div>
+    <div class="row">
+      <div class="f"><label>Caudal L/ha</label><input type="number" id="fca" placeholder="0" step="0.1" inputmode="decimal"></div>
+      <div class="f"><label>Velocidad km/h</label><input type="number" id="fve" placeholder="0" step="0.5" inputmode="decimal"></div>
+    </div>
+    <div class="row">
+      <div class="f"><label>Altura m</label><input type="number" id="fal" placeholder="3" step="0.5" inputmode="decimal"></div>
+      <div class="f"><label>Banda m</label><input type="number" id="fba" placeholder="7" step="0.5" inputmode="decimal"></div>
+    </div>
+    <div class="f"><label>Tamano de Gota</label>
+      <select id="fgo" style="width:100%;padding:10px 12px;border:1.5px solid var(--l);border-radius:8px;font-family:DM Mono,monospace;font-size:13px;background:var(--f);-webkit-appearance:none">
+        <option value="">Seleccionar...</option>
+        <option>Muy fina (menos de 100 um)</option>
+        <option>Fina (100-175 um)</option>
+        <option>Media (175-250 um)</option>
+        <option>Gruesa (250-375 um)</option>
+        <option>Muy gruesa (375-450 um)</option>
+        <option>Ultra gruesa (mas de 450 um)</option>
+      </select>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">🧪 Agroquimicos</div>
+    <div id="alist"></div>
+    <div class="row" style="margin-bottom:8px">
+      <div class="f" style="flex:2"><label>Producto</label><input type="text" id="an" placeholder="Ej: Roundup Max" autocomplete="off"></div>
+      <div class="f"><label>Dosis</label><input type="text" id="ad" placeholder="L/ha" autocomplete="off"></div>
+    </div>
+    <button class="bsm" id="btnAa">+ Agregar</button>
+  </div>
+  <div class="card">
+    <div class="ct">📷 Foto</div>
+    <div class="fa">
+      <div class="fbs">
+        <button class="fb" id="btnCam"><span>📸</span>Camara</button>
+        <button class="fb" id="btnGal"><span>🖼️</span>Galeria</button>
+      </div>
+      <input type="file" id="ic" accept="image/*" capture="environment" style="display:none">
+      <input type="file" id="ig" accept="image/*" style="display:none">
+      <div class="fp" id="fpa"><img id="fia" src="" alt=""><button class="fc" id="btnCfA">✕ Quitar</button></div>
+    </div>
+  </div>
+  <div class="card"><div class="ct">📝 Observaciones</div><textarea id="fno" placeholder="Estado del cultivo..."></textarea></div>
+  <button class="bp" id="btnGi">🚀 Generar Informe</button>
+</div></div>
+
+<!-- INFORME -->
+<div class="sec" id="sec1"><div class="scroll">
+  <div class="ie" id="ie"><div class="ico">📋</div><p>Completa el formulario<br>para generar un informe.</p></div>
+  <div id="ic2" style="display:none">
+    <div id="icard"></div>
+    <div style="height:10px"></div>
+    <button class="bp" id="btnSh">📸 Capturar y Compartir</button>
+    <button class="bs" id="btnCw">💬 Copiar para WhatsApp</button>
+    <button class="bs" id="btnClima" style="background:#e8f5e8;color:#1a7a1a;border-color:#2eb82e">🌡️ Informe Climatico</button>
+    <button class="be" id="btnEx">📊 Exportar Excel</button>
+    <button class="bg" id="btnNi">+ Nuevo informe</button>
+  </div>
+</div></div>
+
+<!-- HISTORIAL -->
+<div class="sec" id="sec2"><div class="scroll" id="hl"><div class="ie"><div class="ico">📂</div><p>Los informes apareceran aqui.</p></div></div></div>
+
+<!-- SIEMBRA -->
+<div class="sec" id="sec3"><div class="scroll">
+  <div class="card">
+    <div class="ct">🌱 Identificacion</div>
+    <div class="f"><label>Productor</label>
+      <input type="text" id="sp" placeholder="Ej: Juan Perez" autocomplete="off">
+      <div class="sg" id="sgs"></div>
+    </div>
+    <div class="f"><label>Lote *</label><input type="text" id="sl" placeholder="Ej: La Esperanza Norte" autocomplete="off"></div>
+    <div class="f"><label>Cultivo</label><input type="text" id="scu" placeholder="Ej: Avena, Centeno, Vicia" autocomplete="off"></div>
+    <div class="f"><label>Ubicacion del Lote</label>
+      <div class="gps-row">
+        <input type="text" id="sub" placeholder="Pega coordenadas o toca el pin" autocomplete="off">
+        <button class="gps-btn" id="btnGpsS">📍</button>
+      </div>
+    </div>
+    <div class="f"><label>Fecha</label><input type="date" id="sf"></div>
+    <div class="row">
+      <div class="f"><label>Has. Lote</label><input type="number" id="sh" placeholder="0" step="0.1" inputmode="decimal"></div>
+      <div class="f"><label>Has. Sembradas</label><input type="number" id="shs" placeholder="0" step="0.1" inputmode="decimal"></div>
+    </div>
+  </div>
+  <div class="card"><div class="ct">⏱️ Tramos de Trabajo</div>
+    <div id="slist-tramos"></div>
+    <div style="background:var(--f);border-radius:10px;padding:12px;border:1.5px dashed var(--l);margin-bottom:8px">
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--g);margin-bottom:8px;font-weight:700">Nuevo tramo</div>
+      <div class="row">
+        <div class="f"><label>Fecha inicio</label><input type="date" id="ts-fi-fecha"></div>
+        <div class="f"><label>Hora inicio</label><input type="time" id="ts-fi-hora"></div>
+      </div>
+      <div class="row">
+        <div class="f"><label>Fecha fin</label><input type="date" id="ts-fn-fecha"></div>
+        <div class="f"><label>Hora fin</label><input type="time" id="ts-fn-hora"></div>
+      </div>
+    </div>
+    <button class="bsm" id="btnStramo">+ Agregar tramo</button>
+  </div>
+  <div class="card"><div class="ct">🌤️ Clima</div>
+    <div id="slist-clima"></div>
+    <div style="background:var(--f);border-radius:10px;padding:12px;border:1.5px dashed var(--l);margin-bottom:8px">
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--g);margin-bottom:8px;font-weight:700">Registrar lectura</div>
+      <div class="row">
+        <div class="f"><label>Fecha</label><input type="date" id="scl-fecha"></div>
+        <div class="f"><label>Hora</label><input type="time" id="scl-hora"></div>
+      </div>
+      <div class="row">
+        <div class="f"><label>Viento km/h</label><input type="number" id="scl-vi" placeholder="0" step="0.5" inputmode="decimal"></div>
+        <div class="f"><label>Dir.</label>
+          <select id="scl-wd" style="width:100%;padding:10px 8px;border:1.5px solid var(--l);border-radius:8px;font-family:'DM Mono',monospace;font-size:13px;background:var(--f);-webkit-appearance:none">
+            <option value="">-</option><option>N</option><option>NE</option><option>E</option><option>SE</option><option>S</option><option>SO</option><option>O</option><option>NO</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="f"><label>Humedad %</label><input type="number" id="scl-hu" placeholder="0" step="1" inputmode="numeric"></div>
+        <div class="f"><label>Temp C</label><input type="number" id="scl-te" placeholder="0" step="0.5" inputmode="decimal"></div>
+      </div>
+    </div>
+    <button class="bsm" id="btnSclima">+ Registrar</button>
+  </div>
+  <div class="card"><div class="ct">⚙️ Parametros</div>
+    <div class="row">
+      <div class="f"><label>Velocidad km/h</label><input type="number" id="sve" placeholder="0" step="0.5" inputmode="decimal"></div>
+      <div class="f"><label>Altura m</label><input type="number" id="sal" placeholder="3" step="0.5" inputmode="decimal"></div>
+    </div>
+    <div class="f"><label>Banda m</label><input type="number" id="sba" placeholder="7" step="0.5" inputmode="decimal"></div>
+  </div>
+  <div class="card"><div class="ct">🌾 Semillas</div>
+    <div id="slist"></div>
+    <div class="row" style="margin-bottom:8px">
+      <div class="f" style="flex:2"><label>Semilla</label><input type="text" id="sn2" placeholder="Ej: Avena" autocomplete="off"></div>
+      <div class="f"><label>Kg/ha</label><input type="number" id="sk" placeholder="0" step="0.5" inputmode="decimal"></div>
+    </div>
+    <button class="bsm" id="btnAs">+ Agregar</button>
+  </div>
+  <div class="card"><div class="ct">📷 Foto</div>
+    <div class="fa">
+      <div class="fbs">
+        <button class="fb" id="btnScam"><span>📸</span>Camara</button>
+        <button class="fb" id="btnSgal"><span>🖼️</span>Galeria</button>
+      </div>
+      <input type="file" id="sic" accept="image/*" capture="environment" style="display:none">
+      <input type="file" id="sig" accept="image/*" style="display:none">
+      <div class="fp" id="fps"><img id="fis" src="" alt=""><button class="fc" id="btnCfS">✕ Quitar</button></div>
+    </div>
+  </div>
+  <div class="card"><div class="ct">📝 Observaciones</div><textarea id="sno" placeholder="Estado del lote..."></textarea></div>
+  <button class="bp" id="btnGs">🌱 Generar Informe de Siembra</button>
+</div></div>
+
+<!-- MODAL INFORME VISUAL -->
+<div class="modal" id="modal">
+  <div class="modal-bar">
+    <span style="color:var(--vc);font-size:12px;font-weight:700">INFORME</span>
+    <div style="display:flex;gap:8px">
+      <button id="btnCapturar" style="background:#25D366;color:white">📸 Guardar imagen</button>
+      <button onclick="document.getElementById('modal').style.display='none'" style="background:#c0392b;color:white">✕ Cerrar</button>
+    </div>
+  </div>
+  <div id="modal-body" style="max-width:640px;margin:0 auto;background:white"></div>
+</div>
+
+<!-- OVERLAY IMAGEN -->
+<div class="img-overlay" id="img-overlay">
+  <div style="position:sticky;top:0;background:var(--ci);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:10">
+    <span style="color:var(--vc);font-size:11px;font-weight:700">MANTEN APRETADA LA IMAGEN PARA COMPARTIR</span>
+    <button onclick="document.getElementById('img-overlay').classList.remove('show')" style="background:#c0392b;color:white;border:none;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer">✕</button>
+  </div>
+  <img id="img-result" style="width:100%;display:block">
+</div>
+
+<div class="toast" id="tst"></div>
+
+<script>
+var inf = [], siem = [], wA = '', wS = '', agr = [], sem = [], foA = '', foS = '', cur = null;
+var tramosA = [], tramosS = [], climaA = [], climaS = [];
+try { inf = JSON.parse(localStorage.getItem('pi') || '[]'); } catch(e) {}
+try { siem = JSON.parse(localStorage.getItem('ps') || '[]'); } catch(e) {}
+
+function goTab(n) {
+  for (var i = 0; i < 4; i++) {
+    document.getElementById('tb'+i).classList.toggle('active', i===n);
+    document.getElementById('sec'+i).classList.toggle('active', i===n);
+  }
+  if (n===2) rh();
+}
+
+function gv(id) { var e = document.getElementById(id); return e ? e.value.trim() : ''; }
+
+function toast(m) {
+  var t = document.getElementById('tst');
+  t.textContent = m; t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2800);
+}
+
+function dur(a, b) {
+  if (!a || !b) return '-';
+  var p1 = a.split(':'), p2 = b.split(':');
+  var m = (parseInt(p2[0])*60+parseInt(p2[1])) - (parseInt(p1[0])*60+parseInt(p1[1]));
+  if (m < 0) m += 1440;
+  var h = Math.floor(m/60); return h > 0 ? h+'h '+(m%60)+'min' : (m%60)+' min';
+}
+
+// Viento
+// Direccion viento ahora manejada via select en registro clima
+
+// GPS
+function getGps(fieldId) {
+  if (!navigator.geolocation) { toast('GPS no disponible'); return; }
+  toast('Obteniendo ubicacion...');
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    var lat = pos.coords.latitude.toFixed(6);
+    var lon = pos.coords.longitude.toFixed(6);
+    document.getElementById(fieldId).value = lat + ', ' + lon;
+    toast('Ubicacion obtenida');
+  }, function() { toast('No se pudo obtener la ubicacion'); }, { enableHighAccuracy: true, timeout: 10000 });
+}
+document.getElementById('btnGpsA').addEventListener('click', function() { getGps('fub'); });
+document.getElementById('btnGpsS').addEventListener('click', function() { getGps('sub'); });
+
+// Agroquimicos
+document.getElementById('btnAa').addEventListener('click', function() {
+  var n = gv('an'), d = gv('ad');
+  if (!n) { toast('Ingresa el producto'); return; }
+  agr.push({n:n, d:d});
+  document.getElementById('an').value = ''; document.getElementById('ad').value = '';
+  ra();
+});
+function ra() {
+  var h = '';
+  for (var i = 0; i < agr.length; i++) h += '<div class="ai"><span>' + agr[i].n + (agr[i].d?' - '+agr[i].d:'') + '</span><button data-i="'+i+'" class="del-a">✕</button></div>';
+  document.getElementById('alist').innerHTML = h;
+}
+document.getElementById('alist').addEventListener('click', function(e) {
+  var b = e.target.closest('.del-a'); if (b) { agr.splice(parseInt(b.getAttribute('data-i')), 1); ra(); }
+});
+
+// Semillas
+document.getElementById('btnAs').addEventListener('click', function() {
+  var n = gv('sn2'), k = gv('sk');
+  if (!n) { toast('Ingresa la semilla'); return; }
+  sem.push({n:n, k:k});
+  document.getElementById('sn2').value = ''; document.getElementById('sk').value = '';
+  rs();
+});
+function rs() {
+  var h = '', tot = 0;
+  for (var i = 0; i < sem.length; i++) { tot += parseFloat(sem[i].k||0); h += '<div class="ai"><span>' + sem[i].n + (sem[i].k?' - '+sem[i].k+' kg/ha':'') + '</span><button data-i="'+i+'" class="del-s">✕</button></div>'; }
+  if (sem.length > 1) h += '<div style="padding:7px 10px;background:var(--vs);border-radius:7px;font-size:12px;font-weight:700;color:var(--v);margin-bottom:5px">Total mezcla: '+tot.toFixed(1)+' kg/ha</div>';
+  document.getElementById('slist').innerHTML = h;
+}
+document.getElementById('slist').addEventListener('click', function(e) {
+  var b = e.target.closest('.del-s'); if (b) { sem.splice(parseInt(b.getAttribute('data-i')), 1); rs(); }
+});
+
+// Fotos
+document.getElementById('btnCam').addEventListener('click', function() { document.getElementById('ic').click(); });
+document.getElementById('btnGal').addEventListener('click', function() { document.getElementById('ig').click(); });
+document.getElementById('btnScam').addEventListener('click', function() { document.getElementById('sic').click(); });
+document.getElementById('btnSgal').addEventListener('click', function() { document.getElementById('sig').click(); });
+
+function setupFoto(inputId, prevId, imgId, which) {
+  document.getElementById(inputId).addEventListener('change', function(e) {
+    var f = e.target.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function(ev) {
+      var u = ev.target.result;
+      if (which === 'a') foA = u; else foS = u;
+      document.getElementById(imgId).src = u;
+      document.getElementById(prevId).classList.add('show');
+    };
+    r.readAsDataURL(f);
+  });
+}
+setupFoto('ic','fpa','fia','a'); setupFoto('ig','fpa','fia','a');
+setupFoto('sic','fps','fis','s'); setupFoto('sig','fps','fis','s');
+
+document.getElementById('btnCfA').addEventListener('click', function() {
+  foA=''; document.getElementById('fpa').classList.remove('show'); document.getElementById('fia').src='';
+  document.getElementById('ic').value=''; document.getElementById('ig').value='';
+});
+document.getElementById('btnCfS').addEventListener('click', function() {
+  foS=''; document.getElementById('fps').classList.remove('show'); document.getElementById('fis').src='';
+  document.getElementById('sic').value=''; document.getElementById('sig').value='';
+});
+
+// Sugerencias productor
+function showSug(inputId, sugId) {
+  var v = gv(inputId).toLowerCase(), sg = document.getElementById(sugId);
+  var todo = inf.concat(siem), u = {};
+  for (var i = 0; i < todo.length; i++) { if (todo[i].p) { var k = todo[i].p.trim().toLowerCase(); if (!u[k]) u[k] = todo[i].p.trim(); } }
+  var lista = Object.keys(u).filter(function(k) { return !v || k.indexOf(v) >= 0; });
+  if (!lista.length) { sg.style.display='none'; return; }
+  var h = '';
+  for (var j = 0; j < lista.length; j++) h += '<div class="si" data-v="'+u[lista[j]].replace(/"/g,'&quot;')+'">'+u[lista[j]]+'</div>';
+  sg.innerHTML = h; sg.style.display = 'block';
+}
+document.getElementById('fp').addEventListener('input', function() { showSug('fp','sgp'); });
+document.getElementById('fp').addEventListener('focus', function() { showSug('fp','sgp'); });
+document.getElementById('sp').addEventListener('input', function() { showSug('sp','sgs'); });
+document.getElementById('sp').addEventListener('focus', function() { showSug('sp','sgs'); });
+document.getElementById('sgp').addEventListener('click', function(e) {
+  var it = e.target.closest('.si'); if (it) { document.getElementById('fp').value=it.getAttribute('data-v'); document.getElementById('sgp').style.display='none'; }
+});
+document.getElementById('sgs').addEventListener('click', function(e) {
+  var it = e.target.closest('.si'); if (it) { document.getElementById('sp').value=it.getAttribute('data-v'); document.getElementById('sgs').style.display='none'; }
+});
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#fp') && !e.target.closest('#sgp')) document.getElementById('sgp').style.display='none';
+  if (!e.target.closest('#sp') && !e.target.closest('#sgs')) document.getElementById('sgs').style.display='none';
+});
+
+// Generar informe aplicacion
+document.getElementById('btnGi').addEventListener('click', function() {
+  var l = gv('fl'); if (!l) { toast('Ingresa el nombre del lote'); return; }
+  var d = { id:Date.now(), tp:'a', l:l, p:gv('fp'), cu:gv('fcu'), ub:gv('fub'), fe:gv('ff'), h:gv('fh'), ha:gv('fha'), tramos:tramosA.slice(), ca:gv('fca'), ve:gv('fve'), al:gv('fal'), ba:gv('fba'), go:gv('fgo'), ag:agr.slice(), clima:climaA.slice(), no:gv('fno'), fo:foA };
+  inf.unshift(d); try { localStorage.setItem('pi', JSON.stringify(inf)); } catch(e) {}
+  cur = d; ri(d); goTab(1); toast('Informe generado');
+});
+
+// Generar siembra
+document.getElementById('btnGs').addEventListener('click', function() {
+  var l = gv('sl'); if (!l) { toast('Ingresa el nombre del lote'); return; }
+  var d = { id:Date.now(), tp:'s', l:l, p:gv('sp'), cu:gv('scu'), ub:gv('sub'), fe:gv('sf'), h:gv('sh'), ha:gv('shs'), tramos:tramosS.slice(), ve:gv('sve'), al:gv('sal'), ba:gv('sba'), sm:sem.slice(), clima:climaS.slice(), no:gv('sno'), fo:foS };
+  siem.unshift(d); try { localStorage.setItem('ps', JSON.stringify(siem)); } catch(e) {}
+  cur = d; ri(d); goTab(1); toast('Informe de siembra generado');
+});
+
+// Render informe en pantalla
+function ri(d) {
+  document.getElementById('ie').style.display = 'none';
+  document.getElementById('ic2').style.display = 'block';
+  document.getElementById('icard').innerHTML = buildInfHTML(d, false);
+  if (d.clima && d.clima.length) setTimeout(function(){ dibujarGraficos(d.clima, 'inf'+d.id); }, 150);
+}
+
+function buildInfHTML(d, paraCaptura) {
+  var es = d.tp === 's';
+  var fe = d.fe ? new Date(d.fe+'T12:00:00').toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '';
+  var ha = d.ha || d.h || '';
+  var dr = dur(d.i, d.n);
+  var hc = es ? '#2d5a1b' : '#1a2e1a';
+  var ico = es ? '🌱' : '🌾';
+  var ti = es ? 'Informe de Siembra' : 'Informe de Aplicacion';
+  var cardStyle = paraCaptura ? 'padding:0;overflow:hidden;border-radius:0;border:none;box-shadow:none;margin:0' : 'padding:0;overflow:hidden';
+
+  function st(label, val, unit, acc) {
+    var bg = acc ? 'background:#e8f5e8' : 'background:white';
+    var vc = acc ? 'color:#1a7a1a' : 'color:#1c2a1c';
+    return '<div class="st'+(acc?' acc':'')+'"><div class="sl">'+label+'</div><div class="sv'+(acc?' gn':'')+'">'+(val||'-')+(unit?'<span class="su">'+unit+'</span>':'')+'</div></div>';
+  }
+  function stFull(label, val, acc) {
+    return '<div class="st full'+(acc?' acc':'')+'"><div class="sl">'+label+'</div><div class="sv'+(acc?' gn':'')+'" style="font-size:14px">'+(val||'-')+'</div></div>';
+  }
+  function stTotal(txt) {
+    return '<div class="st full" style="background:#1a7a1a;color:white"><div class="sl" style="color:rgba(255,255,255,.7)">Total</div><div class="sv" style="color:white;font-size:20px">'+txt+'</div></div>';
+  }
+
+  var h = '<div class="card" style="'+cardStyle+'">';
+  h += '<div class="ih" style="background:'+hc+'"><div class="il">'+ico+' '+d.l+'</div><div class="ib">'+ti+' - DJI T50</div>';
+  if (d.p) h += '<div class="ib">'+d.p+'</div>';
+  if (fe) h += '<div class="ifd">'+fe+'</div>';
+  h += '</div>';
+  if (d.fo) h += '<img class="ifoto" src="'+d.fo+'">';
+
+  var tramos = d.tramos || [];
+  var dr2 = tramos.length ? durTramos(tramos) : dur(d.i, d.n);
+  h += '<div class="is">Tramos de Trabajo</div>';
+  if (tramos.length) {
+    h += '<div class="sts">';
+    for (var ti2=0;ti2<tramos.length;ti2++) {
+      var tr=tramos[ti2];
+      h += '<div class="st full"><div class="sl">Tramo '+(ti2+1)+'</div>';
+      h += '<div style="font-size:12px">&#9654; '+fmtFH(tr.fi,tr.hi)+'</div>';
+      h += '<div style="font-size:12px">&#9632; '+fmtFH(tr.fn,tr.hn)+'</div></div>';
+    }
+    h += '<div class="st full acc"><div class="sl">Duracion total</div><div class="sv gn">'+dr2+'</div></div>';
+    h += '</div>';
+  } else {
+    h += '<div class="sts">';
+    h += st('Inicio', d.i); h += st('Fin', d.n);
+    h += st('Duracion', dur(d.i,d.n), '', true);
+    h += '</div>';
+  }
+  h += '<div class="sts">';
+  if (d.cu) h += stFull('Cultivo', d.cu, true);
+  if (d.ub) h += stFull('Ubicacion', d.ub);
+  h += st('Sup. Lote', d.h, 'ha');
+  h += stFull(es?'Has. Sembradas':'Has. Aplicadas', ha+' ha', true);
+  h += '</div>';
+
+  var climas = d.clima || [];
+  if (climas.length) {
+    var sorted_c = climas.slice().sort(function(a,b){return (a.fe+a.ho).localeCompare(b.fe+b.ho);});
+    var sfx = 'inf'+d.id;
+    h += '<div class="is">Condiciones Climaticas</div>';
+    h += '<div style="padding:12px 14px;background:white;border-top:1px solid #c8dcc8">';
+    h += '<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#c03020;margin-bottom:4px">Temperatura (C)</div><canvas id="cv-te-'+sfx+'" style="width:100%;display:block"></canvas></div>';
+    h += '<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#2060c0;margin-bottom:4px">Humedad (%)</div><canvas id="cv-hu-'+sfx+'" style="width:100%;display:block"></canvas></div>';
+    h += '<div style="margin-bottom:8px"><div style="font-size:10px;font-weight:700;color:#1a7a1a;margin-bottom:4px">Viento (km/h)</div><canvas id="cv-vi-'+sfx+'" style="width:100%;display:block"></canvas></div>';
+    h += '</div>';
+  }
+
+  if (!es) {
+    var tl = (d.ca && ha) ? (parseFloat(d.ca)*parseFloat(ha)).toFixed(0) : null;
+    h += '<div class="is">Parametros de Aplicacion</div><div class="sts">';
+    h += st('Caudal', d.ca, 'L/ha', true); h += st('Velocidad', d.ve, 'km/h', true);
+    h += st('Altura', d.al, 'm'); h += st('Banda', d.ba, 'm');
+    if (d.go) h += stFull('Tamano de Gota', d.go, true);
+    if (tl) h += stTotal(tl+' litros caldo');
+    h += '</div>';
+    if (d.ag && d.ag.length) {
+      h += '<div class="is">Agroquimicos Utilizados</div><div class="sts">';
+      for (var i = 0; i < d.ag.length; i++) {
+        h += '<div class="st full"><div class="sl">Producto '+(i+1)+'</div><div class="sv" style="font-size:14px">'+d.ag[i].n+(d.ag[i].d?' <span style="font-size:12px;color:#5a6b5a;font-weight:400">'+d.ag[i].d+'</span>':'')+'</div></div>';
+      }
+      h += '</div>';
+    }
+  } else {
+    var tk = d.sm.reduce(function(a,x){return a+parseFloat(x.k||0);},0);
+    var tkt = (tk && ha) ? (tk*parseFloat(ha)).toFixed(0) : null;
+    h += '<div class="is">Parametros de Siembra</div><div class="sts">';
+    h += st('Velocidad', d.ve, 'km/h', true); h += st('Altura', d.al, 'm'); h += st('Banda', d.ba, 'm');
+    if (tkt) h += stTotal(tkt+' kg semilla');
+    h += '</div>';
+    if (d.sm && d.sm.length) {
+      h += '<div class="is">Semillas</div><div class="sts">';
+      for (var j = 0; j < d.sm.length; j++) {
+        h += '<div class="st full"><div class="sl">Semilla '+(j+1)+'</div><div class="sv" style="font-size:14px">'+d.sm[j].n+(d.sm[j].k?' <span style="font-size:12px;color:#5a6b5a;font-weight:400">'+d.sm[j].k+' kg/ha</span>':'')+'</div></div>';
+      }
+      if (d.sm.length > 1) h += '<div class="st full acc"><div class="sl">Total Mezcla</div><div class="sv gn">'+tk.toFixed(1)+' kg/ha</div></div>';
+      h += '</div>';
+    }
+  }
+  if (d.no) h += '<div class="is">Observaciones</div><div style="padding:13px 14px;background:white;font-size:13px;color:#5a6b5a;line-height:1.7;border-top:1px solid #c8dcc8">'+d.no+'</div>';
+  if (d.ub) {
+    var mapUrl = 'https://maps.google.com/?q=' + encodeURIComponent(d.ub);
+    h += '<div class="is">Ubicacion del Lote</div>';
+    h += '<div style="padding:13px 14px;background:white;border-top:1px solid #c8dcc8">';
+    h += '<div style="font-size:13px;color:#1a7a1a;font-weight:700;margin-bottom:8px">📍 ' + d.ub + '</div>';
+    h += '<iframe src="https://maps.google.com/maps?q=' + encodeURIComponent(d.ub) + '&output=embed&z=14" style="width:100%;height:200px;border:none;border-radius:8px" loading="lazy"></iframe>';
+    h += '</div>';
+  }
+  h += '<div style="background:#1a2e1a;color:#8fbc8f;text-align:center;padding:12px;font-size:10px;letter-spacing:.1em">PYDRONE - APLICACIONES AEREAS - DJI T50</div>';
+  h += '</div>';
+  return h;
+}
+
+// Capturar y compartir
+document.getElementById('btnSh').addEventListener('click', function() {
+  if (!cur) { toast('No hay informe'); return; }
+  // Mostrar modal con el informe
+  document.getElementById('modal-body').innerHTML = buildInfHTML(cur, true);
+  document.getElementById('modal').style.display = 'block';
+  document.getElementById('modal').scrollTop = 0;
+  if (cur.clima && cur.clima.length) setTimeout(function(){ dibujarGraficos(cur.clima, 'inf'+cur.id); }, 200);
+});
+
+document.getElementById('btnCapturar').addEventListener('click', function() {
+  var body = document.getElementById('modal-body');
+  toast('Generando imagen...');
+  setTimeout(function() {
+    html2canvas(body, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      scrollX: 0,
+      scrollY: 0,
+      width: body.scrollWidth,
+      height: body.scrollHeight,
+      windowWidth: body.scrollWidth,
+      windowHeight: body.scrollHeight
+    }).then(function(canvas) {
+      var dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+      // Mostrar imagen para compartir manteniendo apretado
+      document.getElementById('img-result').src = dataUrl;
+      document.getElementById('img-overlay').classList.add('show');
+      toast('Manten apretada la imagen para guardar o compartir');
+    }).catch(function(err) {
+      toast('Error al generar imagen');
+    });
+  }, 500);
+});
+
+// Historial
+function rh() {
+  var c = document.getElementById('hl');
+  var todo = [];
+  for (var i = 0; i < inf.length; i++) todo.push({d:inf[i], t:'a', i:i});
+  for (var j = 0; j < siem.length; j++) todo.push({d:siem[j], t:'s', i:j});
+  todo.sort(function(a,b){return b.d.id-a.d.id;});
+  if (!todo.length) { c.innerHTML='<div class="ie"><div class="ico">📂</div><p>Los informes apareceran aqui.</p></div>'; return; }
+
+  // Agrupar por productor
+  var grupos = {};
+  var sinProd = [];
+  for (var k = 0; k < todo.length; k++) {
+    var it = todo[k];
+    var prod = (it.d.p || '').trim();
+    if (prod) {
+      if (!grupos[prod]) grupos[prod] = [];
+      grupos[prod].push(it);
+    } else {
+      sinProd.push(it);
+    }
+  }
+
+  function itemHTML(it) {
+    var d = it.d;
+    var fe = d.fe ? new Date(d.fe+'T12:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'2-digit'}) : '-';
+    var ha = d.ha || d.h || '-';
+    var ic = it.t==='s' ? '🌱' : '🌾';
+    var tl = it.t==='s' ? 'Siembra' : 'Aplicacion';
+    return '<div class="hi" style="margin-left:8px;border-left:3px solid var(--vc)">' +
+      '<div class="hic" data-tp="'+it.t+'" data-i="'+it.i+'">'+ic+'</div>' +
+      '<div class="hin" data-tp="'+it.t+'" data-i="'+it.i+'"><div class="hil">'+d.l+'</div><div class="him">'+tl+' · '+fe+(d.cu?' · '+d.cu:'')+'</div></div>' +
+      '<div class="hha" data-tp="'+it.t+'" data-i="'+it.i+'"><div class="hhn">'+ha+'</div><div class="hhl">ha</div></div>' +
+      '<button class="bb del-h" data-tp="'+it.t+'" data-i="'+it.i+'">🗑️</button>' +
+      '</div>';
+  }
+
+  var h = '';
+
+  // Carpetas por productor
+  var prods = Object.keys(grupos).sort();
+  for (var p = 0; p < prods.length; p++) {
+    var nombre = prods[p];
+    var items = grupos[nombre];
+    var totalHa = 0;
+    for (var x = 0; x < items.length; x++) totalHa += parseFloat(items[x].d.ha || items[x].d.h || 0);
+    var carpetaId = 'carp-' + p;
+    h += '<div style="background:var(--ci);border-radius:10px;margin-bottom:10px;overflow:hidden">';
+    h += '<div class="carp-hdr" data-id="'+carpetaId+'" style="display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer">';
+    h += '<span style="font-size:20px">📁</span>';
+    h += '<div style="flex:1"><div style="font-family:Syne,sans-serif;font-size:15px;font-weight:700;color:white">'+nombre+'</div>';
+    h += '<div style="font-size:11px;color:#8fbc8f">'+items.length+' informe'+(items.length>1?'s':'')+' · '+totalHa.toFixed(1)+' ha totales</div></div>';
+    h += '<span id="arr-'+carpetaId+'" style="color:#8fbc8f;font-size:18px;transition:transform .2s">▾</span>';
+    h += '</div>';
+    h += '<div id="'+carpetaId+'" style="display:none">';
+    for (var q = 0; q < items.length; q++) h += itemHTML(items[q]);
+    h += '</div></div>';
+  }
+
+  // Sin productor
+  if (sinProd.length) {
+    h += '<div style="font-size:10px;color:var(--g);text-transform:uppercase;letter-spacing:.1em;margin:10px 0 6px;padding-left:4px">Sin productor asignado</div>';
+    for (var s = 0; s < sinProd.length; s++) h += itemHTML(sinProd[s]);
+  }
+
+  c.innerHTML = h;
+}
+
+document.getElementById('hl').addEventListener('click', function(e) {
+  var hdr = e.target.closest('.carp-hdr');
+  if (hdr) { toggleCarpeta(hdr.getAttribute('data-id')); return; }
+});
+
+function toggleCarpeta(id) {
+  var el = document.getElementById(id);
+  var arr = document.getElementById('arr-'+id);
+  var abierta = el.style.display !== 'none';
+  el.style.display = abierta ? 'none' : 'block';
+  arr.style.transform = abierta ? '' : 'rotate(180deg)';
+}
+document.getElementById('hl').addEventListener('click', function(e) {
+  var del = e.target.closest('.del-h');
+  if (del) {
+    if (!confirm('Borrar?')) return;
+    var tp = del.getAttribute('data-tp'), idx = parseInt(del.getAttribute('data-i'));
+    if (tp==='a') { inf.splice(idx,1); try{localStorage.setItem('pi',JSON.stringify(inf));}catch(err){} }
+    else { siem.splice(idx,1); try{localStorage.setItem('ps',JSON.stringify(siem));}catch(err){} }
+    rh(); toast('Borrado'); return;
+  }
+  var ver = e.target.closest('[data-tp][data-i]:not(.del-h)');
+  if (ver) {
+    var tp = ver.getAttribute('data-tp'), idx = parseInt(ver.getAttribute('data-i'));
+    cur = tp==='a' ? inf[idx] : siem[idx];
+    ri(cur); goTab(1);
+  }
+});
+
+// WhatsApp
+document.getElementById('btnCw').addEventListener('click', function() {
+  var d = cur; if (!d) { toast('No hay informe'); return; }
+  var es = d.tp==='s';
+  var fe = d.fe ? new Date(d.fe+'T12:00:00').toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '-';
+  var ha = d.ha||d.h||'-';
+  var tx = (es ? 'INFORME DE SIEMBRA' : 'INFORME DE APLICACION') + '\n';
+  tx += 'Lote: ' + d.l + '\n';
+  if (d.p) tx += 'Productor: ' + d.p + '\n';
+  if (d.cu) tx += 'Cultivo: ' + d.cu + '\n';
+  if (d.ub) tx += 'Ubicacion: ' + d.ub + '\n';
+  tx += 'Fecha: ' + fe + '\n';
+  tx += 'Horario: ' + (d.i||'-') + ' a ' + (d.n||'-') + ' (' + dur(d.i,d.n) + ')\n';
+  tx += 'Hectareas: ' + (d.h||'-') + ' ha total / ' + ha + ' ha ' + (es?'sembradas':'aplicadas') + '\n';
+  tx += 'Clima: Viento '+(d.vi||'-')+' km/h '+(d.wd||'')+' | Humedad '+(d.hu||'-')+'% | Temp '+(d.te||'-')+'C\n';
+  if (!es) {
+    var tl = (d.ca&&(d.ha||d.h)) ? (parseFloat(d.ca)*parseFloat(d.ha||d.h)).toFixed(0) : '-';
+    tx += 'Caudal: '+(d.ca||'-')+' L/ha | Vel: '+(d.ve||'-')+' km/h | Total: '+tl+' litros\n';
+    if (d.go) tx += 'Gota: ' + d.go + '\n';
+    if (d.ag.length) tx += 'Agroquimicos: '+d.ag.map(function(a){return a.n+(a.d?' '+a.d:'');}).join(', ')+'\n';
+  } else {
+    var tk = d.sm.reduce(function(a,x){return a+parseFloat(x.k||0);},0);
+    tx += 'Vel: '+(d.ve||'-')+' km/h\n';
+    if (d.sm.length) tx += 'Semillas: '+d.sm.map(function(s){return s.n+(s.k?' '+s.k+' kg/ha':'');}).join(' + ')+'\n';
+    if (d.sm.length>1) tx += 'Total mezcla: '+tk.toFixed(1)+' kg/ha\n';
+  }
+  if (d.no) tx += 'Obs: ' + d.no + '\n';
+  tx += '- PyDrone T50';
+  navigator.clipboard.writeText(tx).then(function(){toast('Copiado!');}).catch(function(){
+    var ta=document.createElement('textarea');ta.value=tx;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('Copiado!');
+  });
+});
+
+// Excel
+document.getElementById('btnEx').addEventListener('click', function() {
+  if (!inf.length && !siem.length) { toast('No hay informes'); return; }
+  var csv = '\uFEFF';
+  if (inf.length) {
+    csv += 'APLICACIONES\n"Productor","Lote","Cultivo","Ubicacion","Fecha","Inicio","Fin","Duracion","Has Lote","Has Aplicadas","Total Litros","Viento","Dir","Humedad","Temp","Caudal","Velocidad","Altura","Banda","Gota","Agroquimicos","Obs"\n';
+    for (var i=0;i<inf.length;i++) {
+      var d=inf[i],ha=d.ha||d.h||'',tl=(d.ca&&ha)?(parseFloat(d.ca)*parseFloat(ha)).toFixed(0):'';
+      var fe=d.fe?new Date(d.fe+'T12:00:00').toLocaleDateString('es-AR'):'';
+      var ag=d.ag.map(function(a){return a.n+(a.d?' '+a.d:'');}).join(' | ');
+      csv+=[d.p||'',d.l||'',d.cu||'',d.ub||'',fe,d.i||'',d.n||'',dur(d.i,d.n),d.h||'',ha,tl,d.vi||'',d.wd||'',d.hu||'',d.te||'',d.ca||'',d.ve||'',d.al||'',d.ba||'',d.go||'',ag,d.no||''].map(function(v){return'"'+String(v).replace(/"/g,'""')+'"';}).join(',')+'\n';
+    }
+  }
+  if (siem.length) {
+    csv+='\nSIEMBRAS\n"Productor","Lote","Cultivo","Ubicacion","Fecha","Inicio","Fin","Duracion","Has Lote","Has Sembradas","Total Kg","Viento","Dir","Humedad","Temp","Velocidad","Altura","Banda","Semillas","Obs"\n';
+    for (var j=0;j<siem.length;j++) {
+      var s=siem[j],haS=s.ha||s.h||'',tk=s.sm.reduce(function(a,x){return a+parseFloat(x.k||0);},0),tkt=(tk&&haS)?(tk*parseFloat(haS)).toFixed(0):'';
+      var feS=s.fe?new Date(s.fe+'T12:00:00').toLocaleDateString('es-AR'):'';
+      var sm=s.sm.map(function(x){return x.n+(x.k?' '+x.k+' kg/ha':'');}).join(' | ');
+      csv+=[s.p||'',s.l||'',s.cu||'',s.ub||'',feS,s.i||'',s.n||'',dur(s.i,s.n),s.h||'',haS,tkt,s.vi||'',s.wd||'',s.hu||'',s.te||'',s.ve||'',s.al||'',s.ba||'',sm,s.no||''].map(function(v){return'"'+String(v).replace(/"/g,'""')+'"';}).join(',')+'\n';
+    }
+  }
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download='PyDrone_'+new Date().toLocaleDateString('es-AR').replace(/\//g,'-')+'.csv';
+  a.click();URL.revokeObjectURL(url);toast('Descargando...');
+});
+
+// Nuevo informe
+document.getElementById('btnNi').addEventListener('click', function() {
+  document.querySelectorAll('#sec0 input, #sec0 textarea').forEach(function(e){if(e.type!=='file')e.value='';});
+  try{document.getElementById('ff').valueAsDate=new Date();}catch(err){}
+  wA='';agr=[];foA='';
+  document.getElementById('fpa').classList.remove('show');document.getElementById('fia').src='';
+  document.getElementById('ic').value='';document.getElementById('ig').value='';
+  ra();goTab(0);
+});
+
+window.addEventListener('DOMContentLoaded', function() {
+  var hoy = new Date();
+  var campos = ['ff','sf','ta-fi-fecha','ta-fn-fecha','ts-fi-fecha','ts-fn-fecha','cl-fecha','scl-fecha'];
+  campos.forEach(function(id){ try{document.getElementById(id).valueAsDate=hoy;}catch(e){} });
+  rh();
+});
+// ─── TRAMOS DE TRABAJO ───────────────────────────────────────────────────
+
+function fmtFH(f, h) {
+  if (!f && !h) return '-';
+  var s = '';
+  if (f) { var p = f.split('-'); s = p[2]+'/'+p[1]+'/'+p[0]; }
+  if (h) s += (s ? ' ' : '') + h;
+  return s;
+}
+function durTramos(tr) {
+  var tot = 0;
+  for (var i = 0; i < tr.length; i++) {
+    var t = tr[i];
+    if (t.fi && t.hi && t.fn && t.hn) {
+      var a = new Date(t.fi+'T'+t.hi+':00'), b = new Date(t.fn+'T'+t.hn+':00');
+      if (b > a) tot += (b - a);
+    }
+  }
+  var m = Math.round(tot/60000); if (!m) return '-';
+  var h = Math.floor(m/60); return h > 0 ? h+'h '+(m%60)+'min' : (m%60)+' min';
+}
+function renderTramos(listId, arr) {
+  var h = '';
+  for (var i = 0; i < arr.length; i++) {
+    var t = arr[i];
+    h += '<div class="ai" style="flex-direction:column;align-items:flex-start;gap:2px">';
+    h += '<div style="display:flex;justify-content:space-between;width:100%">';
+    h += '<b style="font-size:11px;color:var(--v)">Tramo '+(i+1)+'</b>';
+    h += '<button data-i="'+i+'" class="del-tramo" style="background:none;border:none;color:var(--g);font-size:16px;cursor:pointer">&times;</button></div>';
+    h += '<span style="font-size:12px">&#9654; '+fmtFH(t.fi,t.hi)+'</span>';
+    h += '<span style="font-size:12px">&#9632; '+fmtFH(t.fn,t.hn)+'</span>';
+    h += '</div>';
+  }
+  document.getElementById(listId).innerHTML = h;
+}
+document.getElementById('btnAtramo').addEventListener('click', function() {
+  var fi = document.getElementById('ta-fi-fecha').value;
+  var hi = document.getElementById('ta-fi-hora').value;
+  var fn = document.getElementById('ta-fn-fecha').value;
+  var hn = document.getElementById('ta-fn-hora').value;
+  if (!fi || !hi) { toast('Ingresa fecha y hora de inicio'); return; }
+  tramosA.push({fi:fi, hi:hi, fn:fn, hn:hn});
+  document.getElementById('ta-fi-fecha').value = '';
+  document.getElementById('ta-fi-hora').value = '';
+  document.getElementById('ta-fn-fecha').value = '';
+  document.getElementById('ta-fn-hora').value = '';
+  renderTramos('alist-tramos', tramosA);
+});
+document.getElementById('alist-tramos').addEventListener('click', function(e) {
+  var b = e.target.closest('.del-tramo');
+  if (b) { tramosA.splice(parseInt(b.getAttribute('data-i')), 1); renderTramos('alist-tramos', tramosA); }
+});
+document.getElementById('btnStramo').addEventListener('click', function() {
+  var fi = document.getElementById('ts-fi-fecha').value;
+  var hi = document.getElementById('ts-fi-hora').value;
+  var fn = document.getElementById('ts-fn-fecha').value;
+  var hn = document.getElementById('ts-fn-hora').value;
+  if (!fi || !hi) { toast('Ingresa fecha y hora de inicio'); return; }
+  tramosS.push({fi:fi, hi:hi, fn:fn, hn:hn});
+  document.getElementById('ts-fi-fecha').value = '';
+  document.getElementById('ts-fi-hora').value = '';
+  document.getElementById('ts-fn-fecha').value = '';
+  document.getElementById('ts-fn-hora').value = '';
+  renderTramos('slist-tramos', tramosS);
+});
+document.getElementById('slist-tramos').addEventListener('click', function(e) {
+  var b = e.target.closest('.del-tramo');
+  if (b) { tramosS.splice(parseInt(b.getAttribute('data-i')), 1); renderTramos('slist-tramos', tramosS); }
+});
+
+// ─── REGISTRO CLIMA ──────────────────────────────────────────────────────
+function renderClima(listId, arr) {
+  var h = '';
+  for (var i = 0; i < arr.length; i++) {
+    var c = arr[i];
+    h += '<div class="ai" style="gap:6px">';
+    h += '<div style="flex:1"><div style="font-size:10px;color:var(--g)">'+fmtFH(c.fe,c.ho)+'</div>';
+    h += '<div style="font-size:12px">V:'+(c.vi||'-')+'km/h '+(c.wd||'')+' H:'+(c.hu||'-')+'% T:'+(c.te||'-')+'C</div></div>';
+    h += '<button data-i="'+i+'" class="del-clima" style="background:none;border:none;color:var(--g);font-size:16px;cursor:pointer">&times;</button>';
+    h += '</div>';
+  }
+  document.getElementById(listId).innerHTML = h;
+}
+document.getElementById('btnAclima').addEventListener('click', function() {
+  var fe = document.getElementById('cl-fecha').value;
+  var ho = document.getElementById('cl-hora').value;
+  if (!fe || !ho) { toast('Ingresa fecha y hora'); return; }
+  climaA.push({
+    fe:fe, ho:ho,
+    vi:document.getElementById('cl-vi').value,
+    wd:document.getElementById('cl-wd').value,
+    hu:document.getElementById('cl-hu').value,
+    te:document.getElementById('cl-te').value
+  });
+  document.getElementById('cl-vi').value = '';
+  document.getElementById('cl-wd').value = '';
+  document.getElementById('cl-hu').value = '';
+  document.getElementById('cl-te').value = '';
+  renderClima('alist-clima', climaA);
+});
+document.getElementById('alist-clima').addEventListener('click', function(e) {
+  var b = e.target.closest('.del-clima');
+  if (b) { climaA.splice(parseInt(b.getAttribute('data-i')), 1); renderClima('alist-clima', climaA); }
+});
+document.getElementById('btnSclima').addEventListener('click', function() {
+  var fe = document.getElementById('scl-fecha').value;
+  var ho = document.getElementById('scl-hora').value;
+  if (!fe || !ho) { toast('Ingresa fecha y hora'); return; }
+  climaS.push({
+    fe:fe, ho:ho,
+    vi:document.getElementById('scl-vi').value,
+    wd:document.getElementById('scl-wd').value,
+    hu:document.getElementById('scl-hu').value,
+    te:document.getElementById('scl-te').value
+  });
+  document.getElementById('scl-vi').value = '';
+  document.getElementById('scl-wd').value = '';
+  document.getElementById('scl-hu').value = '';
+  document.getElementById('scl-te').value = '';
+  renderClima('slist-clima', climaS);
+});
+document.getElementById('slist-clima').addEventListener('click', function(e) {
+  var b = e.target.closest('.del-clima');
+  if (b) { climaS.splice(parseInt(b.getAttribute('data-i')), 1); renderClima('slist-clima', climaS); }
+});
+
+// ─── GRAFICOS CLIMA (Canvas puro, sin script inline) ─────────────────────
+function dibujarChart(id, labels, data, color) {
+  var cv = document.getElementById(id);
+  if (!cv) return;
+  var W = cv.parentElement ? (cv.parentElement.offsetWidth || 300) : 300;
+  cv.width = W; cv.height = 110;
+  var ctx = cv.getContext('2d');
+  var pad = {t:22, r:12, b:38, l:36};
+  var cw = W - pad.l - pad.r, ch = 110 - pad.t - pad.b;
+  var mn = Math.min.apply(null, data), mx = Math.max.apply(null, data);
+  var rng = mx - mn || 1;
+  var n = data.length;
+  ctx.fillStyle = '#f4f8f0'; ctx.fillRect(0,0,W,110);
+  ctx.strokeStyle = '#c8dcc8'; ctx.lineWidth = 0.5;
+  for (var g = 0; g <= 4; g++) {
+    var gy = pad.t + g*ch/4;
+    ctx.beginPath(); ctx.moveTo(pad.l, gy); ctx.lineTo(pad.l+cw, gy); ctx.stroke();
+  }
+  ctx.fillStyle = '#5a6b5a'; ctx.font = '9px monospace'; ctx.textAlign = 'right';
+  for (var g = 0; g <= 4; g++) {
+    var gval = mx - g*rng/4;
+    ctx.fillText(gval.toFixed(1), pad.l-3, pad.t+g*ch/4+3);
+  }
+  function xp(i) { return pad.l + i*(cw/Math.max(n-1,1)); }
+  function yp(v) { return pad.t + ch - (v-mn)/rng*ch; }
+  ctx.beginPath(); ctx.moveTo(xp(0),yp(data[0]));
+  for (var i = 1; i < n; i++) ctx.lineTo(xp(i), yp(data[i]));
+  ctx.lineTo(xp(n-1), pad.t+ch); ctx.lineTo(xp(0), pad.t+ch); ctx.closePath();
+  var fillColor = color.replace('1)', '0.12)');
+  ctx.fillStyle = fillColor; ctx.fill();
+  ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 2;
+  for (var i = 0; i < n; i++) {
+    if (i === 0) ctx.moveTo(xp(i), yp(data[i]));
+    else ctx.lineTo(xp(i), yp(data[i]));
+  }
+  ctx.stroke();
+  for (var i = 0; i < n; i++) {
+    ctx.beginPath(); ctx.arc(xp(i), yp(data[i]), 4, 0, Math.PI*2);
+    ctx.fillStyle = color; ctx.fill();
+    ctx.strokeStyle = 'white'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#1c2a1c'; ctx.font = 'bold 9px monospace'; ctx.textAlign = 'center';
+    ctx.fillText(data[i].toFixed(1), xp(i), yp(data[i])-8);
+  }
+  var miI = data.indexOf(mn), mxI = data.indexOf(mx);
+  ctx.font = 'bold 8px monospace'; ctx.textAlign = 'center';
+  ctx.fillStyle = '#c0392b'; ctx.fillText('MIN', xp(miI), yp(mn)+16);
+  ctx.fillStyle = '#1a7a1a'; ctx.fillText('MAX', xp(mxI), yp(mx)-15);
+  ctx.fillStyle = '#5a6b5a'; ctx.font = '8px monospace'; ctx.textAlign = 'center';
+  for (var i = 0; i < n; i++) {
+    var parts = labels[i].split(' ');
+    if (parts.length > 1) {
+      ctx.fillText(parts[0], xp(i), 110-24);
+      ctx.fillText(parts[1], xp(i), 110-13);
+    } else {
+      ctx.fillText(labels[i], xp(i), 110-13);
+    }
+  }
+}
+function dibujarGraficos(climas, sufijo) {
+  if (!climas || !climas.length) return;
+  var sorted = climas.slice().sort(function(a,b){ return (a.fe+a.ho).localeCompare(b.fe+b.ho); });
+  var lb = sorted.map(function(c){ return fmtFH(c.fe,c.ho); });
+  dibujarChart('cv-te-'+sufijo, lb, sorted.map(function(c){return parseFloat(c.te)||0;}), 'rgba(220,80,40,1)');
+  dibujarChart('cv-hu-'+sufijo, lb, sorted.map(function(c){return parseFloat(c.hu)||0;}), 'rgba(40,120,220,1)');
+  dibujarChart('cv-vi-'+sufijo, lb, sorted.map(function(c){return parseFloat(c.vi)||0;}), 'rgba(30,122,30,1)');
+}
+
+// ─── INFORME CLIMATICO SEPARADO ──────────────────────────────────────────
+document.getElementById('btnClima').addEventListener('click', function() {
+  if (!cur || !cur.clima || !cur.clima.length) { toast('Sin datos climaticos'); return; }
+  var d = cur;
+  var fe = d.fe ? new Date(d.fe+'T12:00:00').toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '';
+  var hc = d.tp==='s' ? '#2d5a1b' : '#1a2e1a';
+  var sorted = d.clima.slice().sort(function(a,b){return (a.fe+a.ho).localeCompare(b.fe+b.ho);});
+  var h = '<div style="background:'+hc+';color:white;padding:18px">';
+  h += '<div style="font-family:Syne,sans-serif;font-size:18px;font-weight:800">Informe Climatico</div>';
+  h += '<div style="font-size:12px;color:#8fbc8f">'+d.l+(d.p?' - '+d.p:'')+'</div>';
+  if (fe) h += '<div style="font-size:11px;color:#8fbc8f;margin-top:3px">'+fe+'</div></div>';
+  h += '<div style="padding:12px 14px;background:white">';
+  h += '<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#c03020;margin-bottom:4px">Temperatura (C)</div><canvas id="cv-te-modal" style="width:100%;display:block"></canvas></div>';
+  h += '<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#2060c0;margin-bottom:4px">Humedad (%)</div><canvas id="cv-hu-modal" style="width:100%;display:block"></canvas></div>';
+  h += '<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;color:#1a7a1a;margin-bottom:4px">Viento (km/h)</div><canvas id="cv-vi-modal" style="width:100%;display:block"></canvas></div>';
+  h += '<table style="width:100%;border-collapse:collapse;font-size:11px">';
+  h += '<tr style="background:#1a2e1a;color:#8fbc8f"><th style="padding:5px 4px;text-align:left">Hora</th><th style="padding:5px 4px">Viento</th><th style="padding:5px 4px">Dir</th><th style="padding:5px 4px">Hum%</th><th style="padding:5px 4px">Temp C</th></tr>';
+  for (var ci = 0; ci < sorted.length; ci++) {
+    var c = sorted[ci], bg = ci%2===0?'white':'#f4f8f0';
+    h += '<tr style="background:'+bg+'"><td style="padding:5px 4px">'+fmtFH(c.fe,c.ho)+'</td>';
+    h += '<td style="padding:5px 4px;text-align:center">'+(c.vi||'-')+'</td>';
+    h += '<td style="padding:5px 4px;text-align:center">'+(c.wd||'-')+'</td>';
+    h += '<td style="padding:5px 4px;text-align:center">'+(c.hu||'-')+'</td>';
+    h += '<td style="padding:5px 4px;text-align:center">'+(c.te||'-')+'</td></tr>';
+  }
+  h += '</table></div>';
+  h += '<div style="background:#1a2e1a;color:#8fbc8f;text-align:center;padding:10px;font-size:10px;letter-spacing:.1em">PYDRONE - INFORME CLIMATICO - DJI T50</div>';
+  document.getElementById('modal-body').innerHTML = h;
+  document.getElementById('modal').style.display = 'block';
+  document.getElementById('modal').scrollTop = 0;
+  setTimeout(function(){ dibujarGraficos(d.clima, 'modal'); }, 200);
+});
+
+</script>
+</body>
+</html>
